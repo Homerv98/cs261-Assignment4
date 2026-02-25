@@ -100,9 +100,43 @@ class AVL(BST):
 
     def add(self, value: object) -> None:
         """
-        TODO: Write your implementation
+        add value to the AVL tree, rebalance if needed.
         """
-        pass
+
+        #empty tree
+        if self._root is None:
+            self._root = AVLNode(value)
+            return
+
+        #insert, reject duplicates
+
+        cur = self._root
+        parent = None
+
+        while cur is not None:
+            parent = cur
+            if value == cur.value:
+                return
+            elif value < cur.value:
+                cur = cur.left
+            else:
+                cur = cur.right
+
+        #insert new node
+
+        new_node = AVLNode(value)
+        new_node.parent = parent
+        if value < parent.value:
+            parent.left = new_node
+        else:
+            parent.right = new_node
+
+
+        #walk up and rebalance
+        node = parent
+        while node is not None:
+            node = self._rebalance(node)
+            node = node.parent
 
     def remove(self, value: object) -> bool:
         """
@@ -132,39 +166,129 @@ class AVL(BST):
 
     def _balance_factor(self, node: AVLNode) -> int:
         """
-        TODO: Write your implementation
+        get balance factor
         """
-        pass
+        if node is None:
+            return 0
+
+        return self._get_height(node.left) - self._get_height(node.right)
 
     def _get_height(self, node: AVLNode) -> int:
         """
-        TODO: Write your implementation
+        return new node height
         """
-        pass
+        if node is None:
+            return -1
+        return node.height
 
     def _rotate_left(self, node: AVLNode) -> AVLNode:
         """
-        TODO: Write your implementation
+        left rotation around node
         """
-        pass
+        new_root = node.right
+        if new_root is None:
+            return node  # nothing to rotate
+
+        # move new_root's left subtree to node's right
+        node.right = new_root.left
+        if new_root.left is not None:
+            new_root.left.parent = node
+
+        # link new_root above node
+        new_root.parent = node.parent
+
+        if node.parent is None:
+            self._root = new_root
+        else:
+            if node.parent.left == node:
+                node.parent.left = new_root
+            else:
+                node.parent.right = new_root
+
+        new_root.left = node
+        node.parent = new_root
+
+        # update heights
+        self._update_height(node)
+        self._update_height(new_root)
+        return new_root
+
+
+
 
     def _rotate_right(self, node: AVLNode) -> AVLNode:
         """
-        TODO: Write your implementation
+        right rotation around node
         """
-        pass
+        new_root = node.left
+        if new_root is None:
+            return node  # nothing to rotate
+
+        # move new_root's right subtree to node's left
+        node.left = new_root.right
+        if new_root.right is not None:
+            new_root.right.parent = node
+
+        # link new_root above node
+        new_root.parent = node.parent
+
+        if node.parent is None:
+            self._root = new_root
+        else:
+            if node.parent.left == node:
+                node.parent.left = new_root
+            else:
+                node.parent.right = new_root
+
+        new_root.right = node
+        node.parent = new_root
+
+        # update heights (bottom-up)
+        self._update_height(node)
+        self._update_height(new_root)
+        return new_root
 
     def _update_height(self, node: AVLNode) -> None:
         """
-        TODO: Write your implementation
+        get the new height of the AVL tree
         """
-        pass
+        if node is None:
+            return
 
-    def _rebalance(self, node: AVLNode) -> None:
+        left_height = self._get_height(node.left)
+        right_height = self._get_height(node.right)
+
+        if left_height > right_height:
+            node.height = 1 + left_height
+        else:
+            node.height = 1 + right_height
+
+    def _rebalance(self, node: AVLNode) -> AVLNode | None:
         """
-        TODO: Write your implementation
+        rebalance the subtree rooted at the node if needed
         """
-        pass
+        if node is None:
+            return None
+
+            #update height
+        self._update_height(node)
+        bf = self._balance_factor(node)
+
+        # Left heavy
+        if bf > 1:
+            # LR case if left child is right heavy
+            if self._balance_factor(node.left) < 0:
+                self._rotate_left(node.left)
+            return self._rotate_right(node)
+
+        # Right heavy
+        if bf < -1:
+            # RL case if right child is left heavy
+            if self._balance_factor(node.right) > 0:
+                self._rotate_right(node.right)
+            return self._rotate_left(node)
+
+        return node
 
 
 # ------------------- BASIC TESTING -----------------------------------------

@@ -140,9 +140,68 @@ class AVL(BST):
 
     def remove(self, value: object) -> bool:
         """
-        TODO: Write your implementation
+        Remove node from AVL tree, rebalance if needed.
+        return true if node is removed, if not return false
         """
-        pass
+        # find node to remove
+        parent = None
+        node = self._root
+
+        while node is not None and node.value != value:
+            parent = node
+            if value < node.value:
+                node = node.left
+            else:
+                node = node.right
+
+        if node is None:
+            return False
+
+        # track where to start rebalancing
+        rebalance_start = None
+
+        # two subtrees
+        if node.left is not None and node.right is not None:
+            rebalance_start = self._remove_two_subtrees(parent, node)
+
+        # one subtree
+        elif node.left is not None or node.right is not None:
+            child = node.left if node.left is not None else node.right
+
+            # removing root
+            if parent is None:
+                self._root = child
+                child.parent = None
+                rebalance_start = child
+            else:
+                # link parent to child
+                if parent.left == node:
+                    parent.left = child
+                else:
+                    parent.right = child
+                child.parent = parent
+                rebalance_start = parent
+
+        # no subtrees
+        else:
+            # removing root leaf
+            if parent is None:
+                self._root = None
+                return True
+            else:
+                if parent.left == node:
+                    parent.left = None
+                else:
+                    parent.right = None
+                rebalance_start = parent
+
+        # rebalance up to root
+        cur = rebalance_start
+        while cur is not None:
+            cur = self._rebalance(cur)
+            cur = cur.parent
+
+        return True
 
     # Experiment and see if you can use the optional                         #
     # subtree removal methods defined in the BST here in the AVL.            #
@@ -154,9 +213,33 @@ class AVL(BST):
 
     def _remove_two_subtrees(self, remove_parent: AVLNode, remove_node: AVLNode) -> AVLNode:
         """
-        TODO: Write your implementation
+        remove a node that has two subtrees using inorder successor
         """
-        pass
+        #find successor
+        successor_parent = remove_node
+        successor = remove_node.right
+
+        while successor.left is not None:
+            successor_parent = successor
+            successor = successor.left
+
+        #copy successors value into the new that is being removed
+        remove_node.value = successor.value
+
+        #remove successor node
+
+        successor_child = successor.right
+
+        if successor_parent.left == successor:
+            successor_parent.left = successor_child
+        else:
+            successor_parent.right = successor_child
+
+        if successor_child is not None:
+            successor_child.parent = successor_parent
+
+        #rebalance
+        return successor_parent
 
     # It's highly recommended to implement                          #
     # the following methods for balancing the AVL Tree.             #

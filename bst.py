@@ -297,9 +297,25 @@ class BST:
 
     def inorder_traversal(self) -> Queue:
         """
-        TODO: Write your implementation
+        Return a queue of all nodes in the BST.
         """
-        pass
+        result = Queue()
+
+        self._inorder_helper(self._root, result)
+
+        return result
+    def _inorder_helper(self, node: BSTNode, result: Queue) -> None:
+
+        if node is None:
+            return
+
+        self._inorder_helper(node.left, result)
+
+        result.enqueue(node.value)
+
+        self._inorder_helper(node.right, result)
+
+
 
     def find_min(self) -> object:
         """

@@ -319,9 +319,17 @@ class BST:
 
     def find_min(self) -> object:
         """
-        TODO: Write your implementation
+        return the minimum value in the BST.
         """
-        pass
+        if self._root is None:
+            return None
+
+        cur = self._root
+
+        while cur.left is not None:
+            cur = cur.left
+
+        return cur.value
 
     def find_max(self) -> object:
         """

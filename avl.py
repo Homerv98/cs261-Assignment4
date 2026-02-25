@@ -182,7 +182,7 @@ class AVL(BST):
                 child.parent = parent
                 rebalance_start = parent
 
-        # no subtrees
+        # no subtree
         else:
             # removing root leaf
             if parent is None:

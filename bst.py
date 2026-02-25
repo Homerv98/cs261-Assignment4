@@ -283,9 +283,17 @@ class BST:
 
     def contains(self, value: object) -> bool:
         """
-        TODO: Write your implementation
+        Return treu is value is in bst. false if not
         """
-        pass
+        cur = self._root
+        while cur is not None:
+            if value == cur.value:
+                return True
+            if value < cur.value:
+                cur = cur.left
+            else:
+                cur = cur.right
+        return False
 
     def inorder_traversal(self) -> Queue:
         """

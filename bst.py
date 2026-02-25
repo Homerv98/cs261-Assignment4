@@ -347,15 +347,15 @@ class BST:
 
     def is_empty(self) -> bool:
         """
-        TODO: Write your implementation
+        return True if BST is empty
         """
-        pass
+        return self._root is None
 
     def make_empty(self) -> None:
         """
-        TODO: Write your implementation
+        remove all nodes from BST
         """
-        pass
+        self._root = None
 
 
 # ------------------- BASIC TESTING -----------------------------------------

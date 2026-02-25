@@ -333,9 +333,17 @@ class BST:
 
     def find_max(self) -> object:
         """
-        TODO: Write your implementation
+        return the maximum value in the BST.
         """
-        pass
+        if self._root is None:
+            return None
+
+        cur = self._root
+
+        while cur.right is not None:
+            cur = cur.right
+
+        return cur.value
 
     def is_empty(self) -> bool:
         """
